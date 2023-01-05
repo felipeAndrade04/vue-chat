@@ -1,0 +1,38 @@
+:root {
+  --text: #010409;
+  --background: #c9d1d9;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background: var(--background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body,
+input,
+textarea,
+button {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  color: var(--text);
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+strong {
+  font-weight: 600;
+}
+button {
+  cursor: pointer;
+}
+[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
