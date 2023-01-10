@@ -1,6 +1,11 @@
 :root {
-  --text: #010409;
-  --background: #c9d1d9;
+  --background: #eaeaea;
+  --main: #1a66ff;
+  --white: #ffffff;
+  --dark: #222222;
+  --gray: #cfcfcf;
+  --gray-200: #e0e0e0;
+  --gray-600: #2d3748;
 }
 * {
   margin: 0;
@@ -18,7 +23,7 @@ textarea,
 button {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   font-weight: 400;
-  color: var(--text);
+  color: var(--dark);
 }
 h1,
 h2,
@@ -27,10 +32,11 @@ h4,
 h5,
 h6,
 strong {
-  font-weight: 600;
+  font-weight: 700;
 }
 button {
   cursor: pointer;
+  border: none;
 }
 [disabled] {
   opacity: 0.6;
