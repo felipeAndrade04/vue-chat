@@ -26,7 +26,7 @@ export default {
 
     function onSubmit() {
       ChatManager.onSetName(state.name);
-      router.push("chat");
+      router.push({ name: "chat", params: { name: state.name } });
     }
 
     return {

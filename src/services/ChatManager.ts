@@ -6,6 +6,7 @@ const WEBSOCKET_URL =
 class ChatManager {
   private socket: WebSocket | undefined;
   public members: string[] = [];
+  public messages: string[] = [];
 
   public onConnect() {
     if (this.socket?.readyState !== WebSocket.OPEN) {
@@ -27,9 +28,8 @@ class ChatManager {
     const data = JSON.parse(dataStr);
     if (data.members) {
       this.members = data.members;
-      console.log(this.members);
     } else if (data.publicMessage) {
-      console.log(data.publicMessage);
+      this.messages.push(data.publicMessage);
     } else if (data.privateMessage) {
       console.log(data.privateMessage);
     } else if (data.systemMessage) {
@@ -39,6 +39,14 @@ class ChatManager {
 
   public onSetName(name: string) {
     this.socket?.send(JSON.stringify({ action: "setName", name }));
+  }
+
+  public onSendMessage(message: string) {
+    this.socket?.send(JSON.stringify({ action: "sendPublic", message }));
+  }
+
+  public onDisconnect() {
+    this.socket?.close();
   }
 }
 
