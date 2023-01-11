@@ -12,7 +12,7 @@
         </button>
       </div>
       <div class="chat-content--members">
-        <div v-if="members.length <= 1" class="chat-content--members-empty">
+        <div v-if="members.length < 1" class="chat-content--members-empty">
           <img src="../assets/Alert.svg" />
           <p>Opps! Nenhum usuário ativo para conversas</p>
         </div>
@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ChatManager from "../services/ChatManager";
 
@@ -56,6 +56,8 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
+
+    const name = route.params.name as string;
 
     const state = reactive({
       message: "",
@@ -71,20 +73,24 @@ export default {
       router.back();
     }
 
+    const members = computed(() => {
+      return Object.values(ChatManager.members).filter(
+        (member) => member !== name
+      );
+    });
+
+    const messages = computed(() => {
+      return ChatManager.messages;
+    });
+
     return {
-      name: route.params.name,
+      name,
       state,
+      members,
+      messages,
       onSendMessage,
       onDisconnect,
     };
-  },
-  computed: {
-    members() {
-      return ChatManager.members;
-    },
-    messages() {
-      return ChatManager.messages;
-    },
   },
   mounted() {
     ChatManager.onConnect();

@@ -3,9 +3,12 @@ import { reactive } from "vue";
 const WEBSOCKET_URL =
   "wss://0ofeqz0qw0.execute-api.us-east-1.amazonaws.com/production";
 
+interface Member {
+  [key: string]: string;
+}
 class ChatManager {
   private socket: WebSocket | undefined;
-  public members: string[] = [];
+  public members: Member = {};
   public messages: string[] = [];
 
   public onConnect() {
