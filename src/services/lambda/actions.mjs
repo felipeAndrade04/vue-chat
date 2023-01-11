@@ -37,7 +37,10 @@ export const setName = async (payload, connectionId) => {
 
 export const sendPublic = async (payload, connectionId) => {
   await sendToAll(Object.keys(NAMES_DB), {
-    publicMessage: `${NAMES_DB[connectionId]}: ${payload.message}`,
+    publicMessage: {
+      id: connectionId,
+      message: payload.message,
+    },
   });
   return {};
 };
@@ -45,7 +48,10 @@ export const sendPublic = async (payload, connectionId) => {
 export const sendPrivate = async (payload, connectionId) => {
   const to = Object.keys(NAMES_DB).find((key) => NAMES_DB[key] === payload.to);
   await sendToOne(to, {
-    privateMessage: `${NAMES_DB[connectionId]}: ${payload.message}`,
+    privateMessage: {
+      id: connectionId,
+      message: payload.message,
+    },
   });
   return {};
 };
