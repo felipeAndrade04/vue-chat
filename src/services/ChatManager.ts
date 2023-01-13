@@ -3,13 +3,25 @@ import { reactive } from "vue";
 const WEBSOCKET_URL =
   "wss://0ofeqz0qw0.execute-api.us-east-1.amazonaws.com/production";
 
-interface Member {
+export interface Member {
   [key: string]: string;
 }
+
+export interface Message {
+  id: string;
+  message: string;
+}
+
+export interface User {
+  id: string;
+  name: string;
+}
+
 class ChatManager {
   private socket: WebSocket | undefined;
   public members: Member = {};
-  public messages: string[] = [];
+  public messages: Message[] = [];
+  public currentUser: User = { id: "", name: "" };
 
   public onConnect() {
     if (this.socket?.readyState !== WebSocket.OPEN) {
@@ -29,7 +41,10 @@ class ChatManager {
 
   private onSocketMessage(dataStr: any) {
     const data = JSON.parse(dataStr);
-    if (data.members) {
+
+    if (data.user) {
+      this.currentUser = data.user;
+    } else if (data.members) {
       this.members = data.members;
     } else if (data.publicMessage) {
       this.messages.push(data.publicMessage);

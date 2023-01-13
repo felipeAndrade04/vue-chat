@@ -12,31 +12,44 @@
         </button>
       </div>
       <div class="chat-content--members">
-        <div v-if="members.length < 1" class="chat-content--members-empty">
+        <div
+          v-if="state.members.length < 1"
+          class="chat-content--members-empty"
+        >
           <img src="../assets/Alert.svg" />
           <p>Opps! Nenhum usuário ativo para conversas</p>
         </div>
         <div v-else class="chat-content--members-list">
           <h1>Amigos</h1>
 
-          <div v-for="member in members" :key="member">
+          <div v-for="member in state.members" :key="member">
             <p>{{ member }}</p>
           </div>
         </div>
       </div>
       <div class="chat-content--messages">
-        <div v-if="messages.length < 1" class="chat-content--messages-empty">
+        <div
+          v-if="state.messages.length < 1"
+          class="chat-content--messages-empty"
+        >
           <img src="../assets/Alert.svg" />
           <p>Opps! Nenhum mensagem foi enviada</p>
         </div>
         <div v-else class="chat-content--messages-list">
-          <div v-for="message in messages" :key="message">
-            <p>{{ message }}</p>
-          </div>
+          <message
+            v-for="message in state.messages"
+            :key="message.id"
+            :content="message.message"
+            :fromCurrentUser="state.currentUser?.id === message.id"
+          />
         </div>
 
         <div class="chat-content--messages-footer">
-          <input v-model="state.message" placeholder="Mensagem" />
+          <input
+            v-model="state.message"
+            @keyup.enter="onSendMessage"
+            placeholder="Mensagem"
+          />
           <button @click="onSendMessage">
             <img src="../assets/send.svg" />
           </button>
@@ -47,20 +60,33 @@
 </template>
 
 <script lang="ts">
-import { reactive, computed } from "vue";
+import { reactive, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ChatManager from "../services/ChatManager";
+import { User, Message as MessageType } from "../services/ChatManager";
+import Message from "../components/Message.vue";
+
+interface State {
+  message: string;
+  currentUser: User;
+  members: string[];
+  messages: MessageType[];
+}
 
 export default {
   name: "ChatPage",
+  components: { Message },
   setup() {
     const router = useRouter();
     const route = useRoute();
 
     const name = route.params.name as string;
 
-    const state = reactive({
+    const state: State = reactive({
       message: "",
+      currentUser: { id: "", name: "" },
+      members: [],
+      messages: [],
     });
 
     function onSendMessage() {
@@ -73,21 +99,17 @@ export default {
       router.back();
     }
 
-    const members = computed(() => {
-      return Object.values(ChatManager.members).filter(
+    watch(ChatManager, (manager) => {
+      state.currentUser = manager.currentUser;
+      state.members = Object.values(manager.members).filter(
         (member) => member !== name
       );
-    });
-
-    const messages = computed(() => {
-      return ChatManager.messages;
+      state.messages = manager.messages;
     });
 
     return {
       name,
       state,
-      members,
-      messages,
       onSendMessage,
       onDisconnect,
     };
@@ -184,9 +206,12 @@ export default {
 
     &--messages {
       padding: 24px;
+      padding-right: 0;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      gap: 24px;
+      overflow-y: auto;
 
       &-empty {
         height: 100%;
@@ -207,10 +232,16 @@ export default {
       }
 
       &-list {
+        padding-right: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow-y: auto;
       }
 
       &-footer {
         padding-top: 24px;
+        padding-right: 24px;
         border-top: 1px solid var(--gray);
         display: flex;
         gap: 16px;

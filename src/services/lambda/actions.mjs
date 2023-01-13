@@ -28,6 +28,9 @@ export const $connect = async () => {
 
 export const setName = async (payload, connectionId) => {
   NAMES_DB[connectionId] = payload.name;
+  await sendToOne(connectionId, {
+    user: { id: connectionId, name: payload.name },
+  });
   await sendToAll(Object.keys(NAMES_DB), { members: NAMES_DB });
   await sendToAll(Object.keys(NAMES_DB), {
     systemMessage: `${NAMES_DB[connectionId]} has joined the chat`,
