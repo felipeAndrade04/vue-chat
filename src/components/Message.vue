@@ -1,21 +1,27 @@
 <template>
-  <div class="message" :class="fromCurrentUser ? 'author' : ''">
-    <p>{{ message }}</p>
+  <div class="message" :class="messageFromCurrentUser ? 'author' : ''">
+    <strong v-if="!messageFromCurrentUser">{{ messageAuthor }}</strong>
+    <p>{{ messageContent }}</p>
   </div>
 </template>
 
 <script lang="ts">
+import { toRefs } from "vue";
+
 export default {
   name: "chat-message",
   props: {
     fromCurrentUser: { type: Boolean, required: true },
     content: { type: String, required: true },
+    author: { type: String, required: true },
   },
   setup(props: any) {
+    const { author, content, fromCurrentUser } = toRefs(props);
+
     return {
-      message: props.content,
-      // eslint-disable-next-line vue/no-dupe-keys
-      fromCurrentUser: props.fromCurrentUser,
+      messageContent: content,
+      messageFromCurrentUser: fromCurrentUser,
+      messageAuthor: author,
     };
   },
 };
@@ -28,6 +34,14 @@ export default {
   background: var(--gray);
   font-size: 14px;
   margin-right: auto;
+
+  strong {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--main);
+    margin-bottom: 4px;
+    display: block;
+  }
 }
 .author {
   background: var(--main);

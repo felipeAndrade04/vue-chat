@@ -13,7 +13,7 @@
       </div>
       <div class="chat-content--members">
         <div
-          v-if="state.members.length < 1"
+          v-if="state.arrMembers.length < 1"
           class="chat-content--members-empty"
         >
           <img src="../assets/Alert.svg" />
@@ -22,7 +22,7 @@
         <div v-else class="chat-content--members-list">
           <h1>Amigos</h1>
 
-          <div v-for="member in state.members" :key="member">
+          <div v-for="member in state.arrMembers" :key="member">
             <p>{{ member }}</p>
           </div>
         </div>
@@ -38,9 +38,10 @@
         <div v-else class="chat-content--messages-list" ref="chatList">
           <message
             v-for="message in state.messages"
-            :key="message.id"
+            :key="message.message"
             :content="message.message"
             :fromCurrentUser="state.currentUser?.id === message.id"
+            :author="state.members[message.id]"
           />
         </div>
 
@@ -63,13 +64,14 @@
 import { reactive, watch, ref, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ChatManager from "../services/ChatManager";
-import { User, Message as MessageType } from "../services/ChatManager";
+import { User, Message as MessageType, Member } from "../services/ChatManager";
 import Message from "../components/Message.vue";
 
 interface State {
   message: string;
   currentUser: User;
-  members: string[];
+  arrMembers: string[];
+  members: Member;
   messages: MessageType[];
 }
 
@@ -87,7 +89,8 @@ export default {
     const state: State = reactive({
       message: "",
       currentUser: { id: "", name: "" },
-      members: [],
+      arrMembers: [],
+      members: {},
       messages: [],
     });
 
@@ -103,10 +106,11 @@ export default {
 
     watch(ChatManager, (manager) => {
       state.currentUser = manager.currentUser;
-      state.members = Object.values(manager.members).filter(
+      state.arrMembers = Object.values(manager.members).filter(
         (member) => member !== name
       );
       state.messages = manager.messages;
+      state.members = manager.members;
     });
 
     watch(ChatManager.messages, () => {
@@ -248,6 +252,7 @@ export default {
         flex-direction: column;
         gap: 12px;
         overflow-y: auto;
+        scroll-behavior: smooth;
       }
 
       &-footer {
