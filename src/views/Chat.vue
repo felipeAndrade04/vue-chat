@@ -35,7 +35,7 @@
           <img src="../assets/Alert.svg" />
           <p>Opps! Nenhum mensagem foi enviada</p>
         </div>
-        <div v-else class="chat-content--messages-list">
+        <div v-else class="chat-content--messages-list" ref="chatList">
           <message
             v-for="message in state.messages"
             :key="message.id"
@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { reactive, watch } from "vue";
+import { reactive, watch, ref, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ChatManager from "../services/ChatManager";
 import { User, Message as MessageType } from "../services/ChatManager";
@@ -79,6 +79,8 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
+
+    const chatList = ref<HTMLElement>();
 
     const name = route.params.name as string;
 
@@ -107,9 +109,18 @@ export default {
       state.messages = manager.messages;
     });
 
+    watch(ChatManager.messages, () => {
+      nextTick(() => {
+        if (chatList.value) {
+          chatList.value.scrollTop = chatList.value.scrollHeight + 200;
+        }
+      });
+    });
+
     return {
       name,
       state,
+      chatList,
       onSendMessage,
       onDisconnect,
     };
