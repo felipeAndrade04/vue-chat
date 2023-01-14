@@ -10,6 +10,7 @@ export interface Member {
 export interface Message {
   id: string;
   message: string;
+  created_at: Date;
 }
 
 export interface User {
@@ -60,7 +61,10 @@ class ChatManager {
   }
 
   public onSendMessage(message: string) {
-    this.socket?.send(JSON.stringify({ action: "sendPublic", message }));
+    const created_at = new Date();
+    this.socket?.send(
+      JSON.stringify({ action: "sendPublic", message, created_at })
+    );
   }
 
   public onDisconnect() {

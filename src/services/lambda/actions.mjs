@@ -43,6 +43,7 @@ export const sendPublic = async (payload, connectionId) => {
     publicMessage: {
       id: connectionId,
       message: payload.message,
+      created_at: payload.created_at,
     },
   });
   return {};
@@ -54,6 +55,7 @@ export const sendPrivate = async (payload, connectionId) => {
     privateMessage: {
       id: connectionId,
       message: payload.message,
+      created_at: payload.created_at,
     },
   });
   return {};

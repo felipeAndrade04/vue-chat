@@ -42,6 +42,7 @@
             :content="message.message"
             :fromCurrentUser="state.currentUser?.id === message.id"
             :author="state.members[message.id]"
+            :created_at="new Date(message.created_at)"
           />
         </div>
 
