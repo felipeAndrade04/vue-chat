@@ -96,6 +96,10 @@ export default {
     });
 
     function onSendMessage() {
+      if (!state.message.trim()) {
+        return;
+      }
+
       ChatManager.onSendMessage(state.message);
       state.message = "";
     }

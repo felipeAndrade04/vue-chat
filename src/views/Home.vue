@@ -3,7 +3,11 @@
     <div class="home-content">
       <h1>Informe o seu nome</h1>
 
-      <input placeholder="Informe o nome" v-model="state.name" />
+      <input
+        placeholder="Informe o nome"
+        @keyup.enter="onSubmit"
+        v-model="state.name"
+      />
 
       <button @click="onSubmit">Entrar</button>
     </div>
